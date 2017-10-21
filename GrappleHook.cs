@@ -8,14 +8,14 @@ public class GrappleHook : MonoBehaviour {
 	[HideInInspector]
 	public bool IsEnabled
 	{
-		get { return _points.Count > 0; }
+		get { return points.Count > 0; }
 	}
 
-	private readonly List<GameObject> _points = new List<GameObject>();
-	public LineRenderer _line;
-	GameObject _grapple;
-	GameObject _previousGrapple;
-	private DistanceJoint2D _joint;
+	private readonly List<GameObject> points = new List<GameObject>();
+	public LineRenderer ropeLine;
+	GameObject grapple;
+	GameObject previousGrapple;
+	private DistanceJoint2D joint;
 	private Rigidbody2D rb2d;
 	public float pushForce = 10f;
 	public float step = .1f;
@@ -28,87 +28,70 @@ public class GrappleHook : MonoBehaviour {
 	public bool deployGrapple;
 	public int currentState;
 	private Animator animator;
+
+
 	void Start(){
 		rb2d = GetComponent<Rigidbody2D>();
 		animator = gameObject.GetComponent<Animator> ();
 
-		_grapple = new GameObject("Grapple");
-		_grapple.AddComponent<CircleCollider2D>().radius = .01f;
-		_grapple.AddComponent<Rigidbody2D>();
-		_grapple.GetComponent<Rigidbody2D> ().isKinematic = true;
-		//_grapple.layer = mask;
-		_grapple.SetActive (false);
+		grapple = new GameObject("Grapple");
+		grapple.AddComponent<CircleCollider2D>().radius = .01f;
+		grapple.AddComponent<Rigidbody2D>();
+		grapple.GetComponent<Rigidbody2D> ().isKinematic = true;
+		grapple.SetActive (false);
 
-		_previousGrapple = (GameObject)Instantiate(_grapple);
-		_previousGrapple.name = "Previous Grapple";
+		previousGrapple = (GameObject)Instantiate(grapple);
+		previousGrapple.name = "Previous Grapple";
 
-		_joint = gameObject.AddComponent<DistanceJoint2D>();
-		_joint.enabled = false;
+		joint = gameObject.AddComponent<DistanceJoint2D>();
+		joint.enabled = false;
 		grappled = false;
 		deployGrapple = false;
 	}
+
 	void Update(){
+		// handles input for the grapple button
 		if (Input.GetKey (KeyCode.Z) && GetComponent<PlayerController> ().grounded == false) {
 			deployGrapple = true;
-			//grappled = true;
-		//} //else if (Input.GetKeyDown (KeyCode.Z) && grappled == true) {
-			//deployGrapple = false;
-			//grappled = true;
 		} else {
 			deployGrapple = false;
-			//grappled = false;
 		}
 
 	}
 
 	void FixedUpdate(){
+		// handles physics for the grapple
 		if (IsEnabled) UpdateGrapple();
 		else CheckForGrapple();
 	}
 
+	// Checks to see if a grapple is in range
 	private void CheckForGrapple(){
 		if(deployGrapple == true){
-		//if (Input.GetKey(KeyCode.Z) && _joint.enabled == false){
-			//grappled = false;
-			//var mousePosition = Input.mousePosition;
-			//mousePosition.z = -Camera.main.transform.position.z;
-			//var worldPosition = Camera.main.ScreenToWorldPoint(mousePosition);
-			//var grapplePoint = transform.position + (worldPosition - transform.position) * Length;
-
 			var hit = Physics2D.Linecast(transform.position, grapplePoint, mask);
 			var distance = Vector3.Distance(transform.position, hit.point);
 			if (hit.collider != null && distance <= Length){
-				//TheifStateMachine;
 				GetComponent<TheifStateMachine> ().currentState = (int)TheifStateMachine.theifState.Grapple;
-				//rb2d.drag = 1;
 				animator.SetBool ("rope", true);
-				_line.positionCount = 2;
-				_line.SetPosition(0, hit.point);
-				//_line.SetPosition(0, grapplePoint);
-				_line.SetPosition(1, transform.position);
-				_line.gameObject.SetActive(true);
-
-				_points.Add(CreateGrapplePoint(hit));
-
-				_grapple.SetActive (true);
-				Debug.Log(_previousGrapple.transform.position);
-				_previousGrapple.SetActive (true);
-				_grapple.transform.position = hit.point;
-				_previousGrapple.transform.position = hit.point;
-				//_grapple.transform.position = grapplePoint;
-				//_previousGrapple.transform.position = grapplePoint;
-				SetParent(_grapple.transform, hit.collider.transform);
-				//Debug.Log(_previousGrapple.transform.position);
-				//Debug.Log(hit.point);
-				_joint.enabled = true;
-				_joint.connectedBody = _grapple.GetComponent<Rigidbody2D>();
-				_joint.distance = Vector2.Distance(hit.point, transform.position);
-				//_joint.distance = Vector2.Distance(grapplePoint, transform.position);
-				//}
+				ropeLine.positionCount = 2;
+				ropeLine.SetPosition(0, hit.point);
+				ropeLine.SetPosition(1, transform.position);
+				ropeLine.gameObject.SetActive(true);
+				points.Add(CreateGrapplePoint(hit));
+				grapple.SetActive (true);
+				Debug.Log(previousGrapple.transform.position);
+				previousGrapple.SetActive (true);
+				grapple.transform.position = hit.point;
+				previousGrapple.transform.position = hit.point;
+				SetParent(grapple.transform, hit.collider.transform);
+				joint.enabled = true;
+				joint.connectedBody = grapple.GetComponent<Rigidbody2D>();
+				joint.distance = Vector2.Distance(hit.point, transform.position);
 			}
 		}
 	}
 
+	// creates a new hinge joint at the point where a raycast hits an object
 	private GameObject CreateGrapplePoint(RaycastHit2D hit){
 		var p = new GameObject("GrapplePoint");
 		SetParent(p.transform, hit.collider.transform);
@@ -116,39 +99,41 @@ public class GrappleHook : MonoBehaviour {
 		return p;
 	}
 
+	// updates various components in the grapple
 	private void UpdateGrapple(){
 		rb2d.drag = .5f;
 		rb2d.gravityScale = 3;
 		UpdateLineDrawing();
 
-		var hit = Physics2D.Linecast(transform.position, _grapple.transform.position, mask1);
-		var hitPrev = Physics2D.Linecast(transform.position, _previousGrapple.transform.position, mask1);
+		var hit = Physics2D.Linecast(transform.position, grapple.transform.position, mask1);
+		var hitPrev = Physics2D.Linecast(transform.position, previousGrapple.transform.position, mask1);
 
-		if (hit.collider.gameObject != _grapple && hit.collider.gameObject != _previousGrapple){
+		if (hit.collider.gameObject != grapple && hit.collider.gameObject != previousGrapple){
 			// if you lose line of sight on the grappling hook, then add a new point to wrap around
 
-			_points.Add(CreateGrapplePoint(hit));
+			points.Add(CreateGrapplePoint(hit));
 
 			UpdateLineDrawing();
 
-			_previousGrapple.transform.position = _grapple.transform.position;
-			SetParent(_previousGrapple.transform, _grapple.transform.parent);
-			_grapple.transform.position = hit.point;
-			SetParent(_grapple.transform, hit.collider.transform);
-			_joint.distance = Vector2.Distance(transform.position, _grapple.transform.position);
+			previousGrapple.transform.position = grapple.transform.position;
+			SetParent(previousGrapple.transform, grapple.transform.parent);
+			grapple.transform.position = hit.point;
+			SetParent(grapple.transform, hit.collider.transform);
+			joint.distance = Vector2.Distance(transform.position, grapple.transform.position);
 
-		} else if (Vector2.Distance(_grapple.transform.position, _previousGrapple.transform.position) <= .1f){
+		} else if (Vector2.Distance(grapple.transform.position, previousGrapple.transform.position) <= .1f){
 			RemoveLastCollider();
 		}
+		// check to see if player let go of the grapple button
 		if(deployGrapple == false){
 
 			// jump off
-			if (Input.GetKey (KeyCode.UpArrow) && transform.position.y < _grapple.transform.position.y)
+			if (Input.GetKey (KeyCode.UpArrow) && transform.position.y < grapple.transform.position.y)
 				rb2d.velocity = new Vector2 (rb2d.velocity.x, 5);
 
 			RetractRope();
 		}
-		_line.SetPosition(_points.Count, transform.position);
+		ropeLine.SetPosition(points.Count, transform.position);
 			if (Input.GetKey (KeyCode.LeftArrow)) {
 				rb2d.transform.localScale = new Vector2 (-1, 1);
 				rb2d.AddForce (Vector2.right * (-pushForce / 20));
@@ -158,70 +143,76 @@ public class GrappleHook : MonoBehaviour {
 				rb2d.AddForce (Vector2.right * (pushForce / 20));
 			} 
 
-		if (_joint.distance > .5) {
+		// allow the rope to retract and extend as to certain lengths
+		if (joint.distance > .5) {
 			if (Input.GetKey (KeyCode.UpArrow)) {
-				_joint.distance -= step;
+				joint.distance -= step;
 				animator.SetBool ("climbing", true);
 
 			} else if (Input.GetKey (KeyCode.DownArrow)) {
-				_joint.distance += step;
+				joint.distance += step;
 				animator.SetBool ("climbing", true);
 			} else {
 				animator.SetBool ("climbing", false);
 			}
 		}
 
+		// get rid of the rope if the player touches the ground
 		if (GetComponentInChildren<GroundCheck>().ground) {
 			RetractRope();
 		}
 
 		// if you can see previous point then unroll back to that point
-		if (hitPrev.collider != null && hitPrev.transform == _previousGrapple.transform)
+		if (hitPrev.collider != null && hitPrev.transform == previousGrapple.transform)
 			RemoveLastCollider();
 	}
 
+	// destroy the rope and all the grapplePoints
 	private void RetractRope(){
 		animator.SetBool ("rope", false);
 		rb2d.drag = 0;
 		rb2d.gravityScale = 2.5f;
 		deployGrapple = false;
-		_joint.enabled = false;
-		_line.gameObject.SetActive(false);
-		_points.ForEach(Destroy);
-		_points.Clear();
-		_grapple.SetActive (false);
-		_previousGrapple.SetActive(false);
+		joint.enabled = false;
+		ropeLine.gameObject.SetActive(false);
+		points.ForEach(Destroy);
+		points.Clear();
+		grapple.SetActive (false);
+		previousGrapple.SetActive(false);
 		GetComponent<TheifStateMachine> ().currentState = (int)TheifStateMachine.theifState.Basic;
 	}
 
+	// remove the last collider and switch to the previous joint
 	private void RemoveLastCollider(){
-		if (_points.Count > 1){
-			Destroy(_points[_points.Count - 1]);
-			_points.RemoveAt(_points.Count - 1);
+		if (points.Count > 1){
+			Destroy(points[points.Count - 1]);
+			points.RemoveAt(points.Count - 1);
 
 			UpdateLineDrawing();
-			_grapple.transform.position = _previousGrapple.transform.position;
+			grapple.transform.position = previousGrapple.transform.position;
 
-			_joint.distance = Vector2.Distance(transform.position, _grapple.transform.position);
+			joint.distance = Vector2.Distance(transform.position, grapple.transform.position);
 
-			SetParent(_grapple.transform, _previousGrapple.transform.parent);
+			SetParent(grapple.transform, previousGrapple.transform.parent);
 		}
 
-		if (_points.Count > 1)
-			_previousGrapple.transform.position = _points [_points.Count - 2].transform.position;
+		if (points.Count > 1)
+			previousGrapple.transform.position = points [points.Count - 2].transform.position;
 		else {
 			
-			_previousGrapple.transform.position = _grapple.transform.position;
+			previousGrapple.transform.position = grapple.transform.position;
 		}
 	}
 
+	// update the line representing the rope
 	private void UpdateLineDrawing(){
-		_line.positionCount = _points.Count + 1;
-		for (var i = 0; i < _points.Count; i++)
-			_line.SetPosition(i, _points[i].transform.position);
-		_line.SetPosition(_points.Count, transform.position);
+		ropeLine.positionCount = points.Count + 1;
+		for (var i = 0; i < points.Count; i++)
+			ropeLine.SetPosition(i, points[i].transform.position);
+		ropeLine.SetPosition(points.Count, transform.position);
 	}
 
+	// sets a childs parent
 	private void SetParent(Transform child, Transform parent){
 		child.SetParent(parent);
 		if (parent != null)

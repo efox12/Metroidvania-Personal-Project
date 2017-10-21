@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -138,6 +138,7 @@ public class PlayerController : MonoBehaviour {
 
 		//Flip the player based on current scale and velocity
 		FlipPlayer(velocity);
+
 		if (grounded && Input.GetKeyDown (KeyCode.DownArrow)) {
 			hidden = !hidden;
 		}
@@ -150,6 +151,7 @@ public class PlayerController : MonoBehaviour {
 		SceneManager.LoadScene(scene, LoadSceneMode.Single);
 	}
 
+	// Returns a vector parellel to the ground in the direction the player is facing
 	private Vector2 GroundAngle(float velocityInput){
 		RaycastHit2D hit = Physics2D.Raycast (transform.position, Vector2.down, 1, groundMask);
 		Debug.DrawRay (transform.position, hit.normal);
