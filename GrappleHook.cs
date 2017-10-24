@@ -33,7 +33,7 @@ public class GrappleHook : MonoBehaviour {
 	void Start(){
 		rb2d = GetComponent<Rigidbody2D>();
 		animator = gameObject.GetComponent<Animator> ();
-
+		
 		grapple = new GameObject("Grapple");
 		grapple.AddComponent<CircleCollider2D>().radius = .01f;
 		grapple.AddComponent<Rigidbody2D>();
@@ -77,6 +77,7 @@ public class GrappleHook : MonoBehaviour {
 				ropeLine.SetPosition(0, hit.point);
 				ropeLine.SetPosition(1, transform.position);
 				ropeLine.gameObject.SetActive(true);
+				
 				points.Add(CreateGrapplePoint(hit));
 				grapple.SetActive (true);
 				Debug.Log(previousGrapple.transform.position);

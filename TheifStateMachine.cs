@@ -13,10 +13,10 @@ public class TheifStateMachine : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
+		// go to the current state
 		if (currentState == (int)theifState.Basic) {
 			BasicState ();
 		} else if (currentState == (int)theifState.WallJump) {
-			//Debug.Log ("test1");
 			WallJumpState ();
 		} else if (currentState == (int)theifState.Grapple) {
 			GrappleState ();
