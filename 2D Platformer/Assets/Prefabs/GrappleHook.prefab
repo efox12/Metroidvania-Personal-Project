@@ -1,0 +1,121 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1001 &100100000
+Prefab:
+  m_ObjectHideFlags: 1
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 0}
+    m_Modifications: []
+    m_RemovedComponents: []
+  m_ParentPrefab: {fileID: 0}
+  m_RootGameObject: {fileID: 1903216160622752}
+  m_IsPrefabParent: 1
+--- !u!1 &1903216160622752
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  serializedVersion: 5
+  m_Component:
+  - component: {fileID: 4540177980832966}
+  - component: {fileID: 114471464620331630}
+  - component: {fileID: 114472855465145888}
+  - component: {fileID: 50634361951612336}
+  m_Layer: 8
+  m_Name: GrappleHook
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &4540177980832966
+Transform:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1903216160622752}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!50 &50634361951612336
+Rigidbody2D:
+  serializedVersion: 4
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1903216160622752}
+  m_BodyType: 1
+  m_Simulated: 1
+  m_UseFullKinematicContacts: 0
+  m_UseAutoMass: 0
+  m_Mass: 1
+  m_LinearDrag: 0
+  m_AngularDrag: 0.05
+  m_GravityScale: 1
+  m_Material: {fileID: 0}
+  m_Interpolate: 0
+  m_SleepingMode: 1
+  m_CollisionDetection: 0
+  m_Constraints: 0
+--- !u!114 &114471464620331630
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1903216160622752}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 33abbb0c99b814ec9a3efbee95d8c45d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Length: 5
+  ropeLine: {fileID: 0}
+  pushForce: 300
+  step: 0.03
+  pushright: 0
+  pushLeft: 0
+  grappled: 0
+  mask:
+    serializedVersion: 2
+    m_Bits: 1024
+  mask1:
+    serializedVersion: 2
+    m_Bits: 3073
+  grapplePoint: {x: 0, y: 0, z: 0}
+  deployGrapple: 0
+  currentState: 0
+--- !u!114 &114472855465145888
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1903216160622752}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ed4203f19a72945ed9bfcc9bd63c1f53, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  distance: 5
+  grappleOverlap:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  mask:
+    serializedVersion: 2
+    m_Bits: 1024
+  mask1:
+    serializedVersion: 2
+    m_Bits: 3073
+  tileMap: {fileID: 0}
+  highlightTile: {fileID: 11400000, guid: 1e2b8011ac2184268b08c442818d2815, type: 2}
+  tile: {fileID: 11400000, guid: 955d659102be84873817009025178bf8, type: 2}
+  lengthList: []
+  grapplePoint: {x: 0, y: 0, z: 0}
+  validPoint: 0
